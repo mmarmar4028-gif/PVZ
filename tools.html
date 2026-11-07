@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Инструменты · Защита ПВЗ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230047BB'/%3E%3Ccircle cx='23' cy='9' r='3.5' fill='%23FA843C'/%3E%3C/svg%3E">
+</head>
+<body data-page="tools">
+<main>
+  <section style="padding-bottom:24px">
+    <div class="container"><div class="section-head" style="margin:0"><div class="eyebrow">Бесплатные инструменты</div><h1 style="font-size:clamp(30px,4.4vw,44px)">Посчитайте и подготовьте сами</h1><p>Всё считается в вашем браузере, данные никуда не отправляются.</p></div></div>
+  </section>
+  <section id="claim" style="padding-top:24px"><div class="container"><div class="section-head"><h2>Претензия по удержанию</h2><p>Укажите, что произошло. Получите черновик претензии и список доказательств.</p></div><div id="claimTool"></div></div></section>
+  <section id="profit" class="soft"><div class="container"><div class="section-head"><h2>Прибыль точки</h2><p>Внесите доход и расходы за месяц, чтобы увидеть, сколько остаётся и на что уходят деньги.</p></div><div id="profitTool"></div></div></section>
+  <section id="nds"><div class="container"><div class="section-head"><h2>Порог НДС на УСН</h2><p>С 2026 года НДС на упрощёнке платят при доходе выше порога. Проверьте свой запас.</p></div><div id="ndsTool"></div></div></section>
+  <section class="band"><div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap"><div style="max-width:620px"><h2>Хотите, чтобы споры вели за вас?</h2><p class="muted" style="margin-top:10px;font-size:17px">На тарифе «Оптимальный» до 10 споров в месяц на точку входят в стоимость.</p></div><a class="btn btn-white" href="index.html#tarify">Смотреть тарифы</a></div></section>
+</main>
+<script src="assets/app.js"></script>
+<script src="assets/tools.js"></script>
+<script>
+window.addEventListener('load', () => { mountClaim($('#claimTool')); mountProfit($('#profitTool')); mountNds($('#ndsTool')); });
+</script>
+</body>
+</html>

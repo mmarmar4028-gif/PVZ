@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Заявка · Защита ПВЗ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230047BB'/%3E%3Ccircle cx='23' cy='9' r='3.5' fill='%23FA843C'/%3E%3C/svg%3E">
+</head>
+<body data-page="apply">
+<main class="container" style="padding-block:48px 80px">
+  <div class="section-head" style="margin-bottom:24px"><div class="eyebrow">Заявка на подключение</div><h1 style="font-size:clamp(30px,4.4vw,44px)">Оформите защиту для своих точек</h1><p>Заполнение займёт пару минут. Оплата после звонка куратора, сейчас ничего платить не нужно.</p></div>
+  <p class="notice" style="margin-bottom:32px;max-width:760px">Сайт работает в демо-режиме: заявка сохранится только в этом браузере и откроет демо-кабинет. Никуда она не отправляется.</p>
+
+  <div class="apply-layout" id="formWrap">
+    <form id="applyForm" novalidate>
+      <fieldset class="fieldset"><legend>1. Тариф</legend>
+        <div class="plan-pick" id="planPick"></div>
+      </fieldset>
+
+      <fieldset class="fieldset"><legend>2. Точки и оплата</legend>
+        <div class="row2">
+          <div class="field"><span class="label" id="ptsL">Сколько точек подключаем</span><div class="stepper"><button type="button" id="ptsMinus" aria-label="Меньше точек">−</button><input id="pts" type="number" min="1" max="200" value="1" inputmode="numeric" aria-labelledby="ptsL"><button type="button" id="ptsPlus" aria-label="Больше точек">+</button></div></div>
+          <div class="field"><span class="label">Период оплаты</span><div class="seg" role="group" aria-label="Период оплаты"><button type="button" data-period="year" aria-pressed="true">За год</button><button type="button" data-period="month" aria-pressed="false">Помесячно</button></div></div>
+        </div>
+        <div class="field"><span class="label" id="platL">С какими площадками работаете</span>
+          <div class="chips" id="platforms" role="group" aria-labelledby="platL"></div></div>
+        <div class="field"><label for="city">Город</label><input class="input" id="city" autocomplete="address-level2" placeholder="Москва"></div>
+      </fieldset>
+
+      <fieldset class="fieldset"><legend>3. Контакты</legend>
+        <div class="row2">
+          <div class="field"><label for="name">Имя</label><input class="input" id="name" autocomplete="name" required><span class="err" id="name-err" hidden>Укажите имя</span></div>
+          <div class="field"><label for="phone">Телефон</label><input class="input" id="phone" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00" required><span class="err" id="phone-err" hidden>Введите номер, минимум 10 цифр</span></div>
+          <div class="field"><label for="email">Электронная почта</label><input class="input" id="email" type="email" autocomplete="email" required><span class="err" id="email-err" hidden>Проверьте адрес почты</span></div>
+          <div class="field"><label for="inn">ИНН <span class="muted" style="font-weight:400">(необязательно)</span></label><input class="input" id="inn" inputmode="numeric" maxlength="12"><span class="err" id="inn-err" hidden>ИНН состоит из 10 или 12 цифр</span></div>
+        </div>
+        <div class="field"><label for="contactWay">Как удобнее связаться</label><select class="input" id="contactWay"><option>Звонок</option><option>Telegram</option><option>WhatsApp</option><option>Почта</option></select></div>
+        <div class="field"><label for="comment">Комментарий <span class="muted" style="font-weight:400">(необязательно)</span></label><textarea class="input" id="comment" rows="3" placeholder="Например: много удержаний за простой на Ozon"></textarea></div>
+        <label class="check"><input type="checkbox" id="consent"> <span>Согласен на обработку персональных данных для связи по заявке</span></label>
+        <span class="err" id="consent-err" hidden>Нужно согласие, чтобы куратор мог с вами связаться</span>
+      </fieldset>
+      <button class="btn" type="submit" style="min-width:240px">Отправить заявку</button>
+    </form>
+
+    <aside class="card summary" aria-label="Итог заявки">
+      <div class="label" style="margin-bottom:8px">Ваш выбор</div>
+      <div id="sum"></div>
+      <p class="hint" style="margin-top:14px">Цены за точку с НДС. В пилоте «Оптимальный» стоит полцены на 2 месяца.</p>
+      <button class="link-btn small" type="button" onclick="openBot('Подобрать тариф')" style="margin-top:10px">Не уверены? Спросите бота</button>
+    </aside>
+  </div>
+
+  <div id="done" hidden class="card" style="max-width:640px;padding:36px">
+    <div class="eyebrow">Заявка сохранена</div>
+    <h2 style="margin:10px 0 12px">Спасибо! Заявка № <span id="orderNo"></span></h2>
+    <p class="muted" id="doneText"></p>
+    <ul class="timeline" style="margin:24px 0">
+      <li class="done"><div><b>Заявка создана</b><span id="doneDate"></span></div></li>
+      <li><div><b>Звонок куратора</b><span>Проверка данных и точек</span></div></li>
+      <li><div><b>Оплата и доступ в кабинет</b><span>После подтверждения</span></div></li>
+    </ul>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="account.html">Открыть демо-кабинет</a><a class="btn btn-ghost" href="index.html">На главную</a></div>
+  </div>
+</main>
+
+<script src="assets/app.js"></script>
+<script>
+window.addEventListener('load', () => {
+  const qs = new URLSearchParams(location.search);
+  const st = { plan: TARIFFS.some(t => t.id === qs.get('plan')) ? qs.get('plan') : 'opt', points: Math.max(1, Math.min(200, parseInt(qs.get('points'), 10) || 1)), period: qs.get('period') === 'month' ? 'month' : 'year', platforms: ['Ozon'] };
+  $('#pts').value = st.points;
+  $$('[data-period]').forEach(b => b.setAttribute('aria-pressed', b.dataset.period === st.period));
+
+  $('#planPick').innerHTML = TARIFFS.map(t => `<label><input type="radio" name="plan" value="${t.id}"${t.id === st.plan ? ' checked' : ''}><b>${t.name}</b><span>${rub(t.year)} за точку в год</span><span>${t.for}</span></label>`).join('');
+  $('#platforms').innerHTML = ['Ozon', 'Яндекс Маркет', 'Wildberries', 'Другие'].map(p => `<button class="chip" type="button" aria-pressed="${st.platforms.includes(p)}">${p}</button>`).join('');
+  $$('#platforms .chip').forEach(b => b.onclick = () => { const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); st.platforms = $$('#platforms .chip').filter(x => x.getAttribute('aria-pressed') === 'true').map(x => x.textContent); });
+
+  function total() { const t = tariffById(st.plan); return st.period === 'year' ? t.year * st.points : t.month * st.points; }
+  function drawSum() {
+    const t = tariffById(st.plan);
+    $('#sum').innerHTML = `<div class="sum-row"><span>Тариф</span><b>${t.name}</b></div>
+      <div class="sum-row"><span>Точек</span><b>${st.points}</b></div>
+      <div class="sum-row"><span>Цена за точку</span><b>${st.period === 'year' ? rub(t.year) + ' в год' : rub(t.month) + ' в месяц'}</b></div>
+      <div class="sum-total">${rub(total())} <span class="muted" style="font-size:15px;font-weight:500">${st.period === 'year' ? 'в год' : 'в месяц'}</span></div>
+      ${st.period === 'month' ? `<p class="hint" style="margin-top:6px">При оплате за год было бы ${rub(t.year * st.points)}, экономия ${rub((t.month * 12 - t.year) * st.points)}</p>` : ''}`;
+  }
+  $$('input[name=plan]').forEach(r => r.onchange = () => { st.plan = r.value; drawSum(); });
+  const setPts = v => { st.points = Math.max(1, Math.min(200, v || 1)); $('#pts').value = st.points; drawSum(); };
+  $('#ptsMinus').onclick = () => setPts(st.points - 1);
+  $('#ptsPlus').onclick = () => setPts(st.points + 1);
+  $('#pts').addEventListener('input', () => { st.points = Math.max(1, Math.min(200, parseInt($('#pts').value, 10) || 1)); drawSum(); });
+  $$('[data-period]').forEach(b => b.onclick = () => { st.period = b.dataset.period; $$('[data-period]').forEach(x => x.setAttribute('aria-pressed', x === b)); drawSum(); });
+  drawSum();
+
+  const show = (id, bad) => { $('#' + id + '-err').hidden = !bad; const el = $('#' + id); if (el) el.setAttribute('aria-invalid', bad); return bad; };
+  $('#applyForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const v = k => $('#' + k).value.trim();
+    let bad = false;
+    bad = show('name', !v('name')) || bad;
+    bad = show('phone', v('phone').replace(/\D/g, '').length < 10) || bad;
+    bad = show('email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('email'))) || bad;
+    bad = show('inn', v('inn') !== '' && !/^(\d{10}|\d{12})$/.test(v('inn'))) || bad;
+    bad = show('consent', !$('#consent').checked) || bad;
+    if (bad) { const first = $('[aria-invalid=true]') || $('#consent'); first.focus(); return; }
+    const no = 'ПВЗ-' + String(Date.now()).slice(-6);
+    const order = { no, created: new Date().toISOString(), plan: st.plan, points: st.points, period: st.period, total: total(), platforms: st.platforms, city: v('city'), name: v('name'), phone: v('phone'), email: v('email'), inn: v('inn'), contactWay: $('#contactWay').value, comment: v('comment') };
+    const saved = store.set('order', order);
+    $('#formWrap').hidden = true; $('#done').hidden = false;
+    $('#orderNo').textContent = no;
+    $('#doneDate').textContent = new Date().toLocaleString('ru-RU');
+    $('#doneText').textContent = saved
+      ? `Тариф «${tariffById(st.plan).name}» на ${pointsWord(st.points)}, ${rub(order.total)} ${st.period === 'year' ? 'в год' : 'в месяц'}. В демо-режиме заявка хранится только в этом браузере, а демо-кабинет уже показывает выбранный тариф.`
+      : 'Браузер не дал сохранить заявку (возможно, включён приватный режим). Демо-кабинет откроется с примерными данными.';
+    scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
