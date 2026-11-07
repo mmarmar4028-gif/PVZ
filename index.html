@@ -1,0 +1,373 @@
+<title>Защита ПВЗ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: шапка с навигацией, под ней одна узкая колонка. Четыре экрана: тарифы, заявка, кабинет. Светлая минималистичная тема, один синий акцент. */
+:root{--bg:#fafaf7;--card:#ffffff;--fg:#14171f;--mut:#5d6472;--line:#e3e4df;--ac:#2446c9;--ac-fg:#ffffff;--soft:#eef1fc;--ok:#1c7a45;--bad:#b3261e;--f:'Manrope',system-ui,-apple-system,'Segoe UI',Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10131a;--card:#171b25;--fg:#eceef3;--mut:#9aa2b3;--line:#2a3042;--ac:#7f9bff;--ac-fg:#0b1030;--soft:#1c2340;--ok:#6fd49b;--bad:#ff8a7a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10131a;--card:#171b25;--fg:#eceef3;--mut:#9aa2b3;--line:#2a3042;--ac:#7f9bff;--ac-fg:#0b1030;--soft:#1c2340;--ok:#6fd49b;--bad:#ff8a7a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-size:16px;line-height:1.55;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 56px}
+.wrap{max-width:1040px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:18px 0;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:19px;color:var(--fg);text-decoration:none}
+.brand b{color:var(--ac)}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{color:var(--mut);text-decoration:none;font-weight:600;font-size:15px;padding:8px 14px;border-radius:10px}
+nav a:hover{color:var(--fg);background:var(--soft)}
+nav a[aria-current=page]{color:var(--ac);background:var(--soft)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+main{padding-top:36px}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.12;margin:0 0 12px;font-weight:800;text-wrap:balance;max-width:20ch}
+h2{font-size:clamp(22px,3.4vw,30px);margin:0 0 6px;font-weight:700;line-height:1.2;text-wrap:balance}
+h3{font-size:17px;margin:0 0 6px;font-weight:700}
+.lead{color:var(--mut);font-size:18px;max-width:58ch;margin:0 0 24px}
+.sub{color:var(--mut);margin:0 0 20px;max-width:62ch}
+section.view{padding-bottom:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;min-width:0}
+.card.pick{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac) inset}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px}
+.stack{display:grid;gap:16px}
+.price{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.per{color:var(--mut);font-size:14px;margin:2px 0 12px}
+.badge{display:inline-block;font-size:12px;font-weight:700;background:var(--soft);color:var(--ac);padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.for{color:var(--mut);font-size:14px;margin:0 0 10px}
+ul.l{margin:0 0 16px;padding-left:18px;display:grid;gap:5px;font-size:14.5px}
+.btn{display:inline-block;background:var(--ac);color:var(--ac-fg);font-weight:700;font-family:var(--f);font-size:15px;border:0;border-radius:12px;padding:12px 20px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{filter:brightness(1.1)}
+.btn.sec{background:transparent;color:var(--ac);border:1.5px solid var(--ac)}
+.btn.sm{padding:8px 14px;font-size:14px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+label{display:block;font-weight:600;font-size:14px;margin:0 0 5px}
+.f{margin-bottom:14px}
+input,select,textarea{width:100%;font-family:var(--f);font-size:16px;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:11px 13px}
+input[type=checkbox],input[type=radio]{width:auto;accent-color:var(--ac)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.r2{grid-template-columns:1fr}}
+.hint{color:var(--mut);font-size:13px;margin-top:5px}
+.demo{background:var(--soft);color:var(--fg);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:20px}
+.sep{height:1px;background:var(--line);margin:28px 0}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tabs button{background:transparent;border:0;color:var(--mut);font-family:var(--f);font-weight:600;font-size:14.5px;padding:8px 13px;border-radius:10px;cursor:pointer}
+.tabs button:hover{background:var(--soft);color:var(--fg)}
+.tabs button[aria-selected=true]{background:var(--soft);color:var(--ac)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:15px;margin:0}
+.kv dt{color:var(--mut)}.kv dd{margin:0;font-weight:600}
+pre{white-space:pre-wrap;word-break:break-word;font-family:var(--f);font-size:14.5px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 12px;max-height:380px;overflow:auto}
+.chat{display:grid;gap:10px;max-height:340px;overflow:auto;padding:4px 2px;margin-bottom:12px}
+.msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:15px;white-space:pre-wrap}
+.msg.u{justify-self:end;background:var(--ac);color:var(--ac-fg);border-bottom-right-radius:4px}
+.msg.b{justify-self:start;background:var(--soft);border-bottom-left-radius:4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:var(--card);border:1px solid var(--line);color:var(--fg);font-family:var(--f);font-size:13.5px;font-weight:600;border-radius:999px;padding:7px 12px;cursor:pointer}
+.chip:hover{border-color:var(--ac);color:var(--ac)}
+.ask{display:flex;gap:8px}
+.ask input{flex:1;min-width:0}
+details{border-bottom:1px solid var(--line);padding:12px 0}
+details summary{cursor:pointer;font-weight:700;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:'+';float:right;color:var(--ac);font-size:20px;line-height:1}
+details[open] summary::after{content:'−'}
+details p{margin:8px 0 0;color:var(--mut)}
+.st{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--soft);color:var(--ac)}
+.list{display:grid;gap:10px;margin-top:14px}
+.item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.item small{color:var(--mut);display:block}
+.big{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+.q{height:8px;border-radius:5px;background:var(--line);overflow:hidden;margin-top:6px}
+.q i{display:block;height:100%;background:var(--ac)}
+.note{color:var(--mut);font-size:13px}
+footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--mut);font-size:13.5px;max-width:70ch}
+.quiz fieldset{border:0;padding:0;margin:0 0 14px}
+.quiz legend{font-weight:700;font-size:15px;margin-bottom:6px;padding:0}
+.quiz label{font-weight:500;display:flex;gap:8px;align-items:center;margin:4px 0}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <a class="brand" href="#home">Защита <b>ПВЗ</b></a>
+  <nav aria-label="Разделы">
+    <a href="#home" data-nav="home">Тарифы</a>
+    <a href="#buy" data-nav="buy">Заявка</a>
+    <a href="#account" data-nav="account">Личный кабинет</a>
+  </nav>
+</header>
+<main>
+
+<!-- ТАРИФЫ -->
+<section class="view" id="v-home">
+  <h1>Защита для владельцев пунктов выдачи</h1>
+  <p class="lead">Споры с площадкой, замена сотрудника, вопросы юристу и финансисту. Один тариф на точку, цена не растёт от числа посылок.</p>
+  <div class="grid" id="plans"></div>
+  <p class="note" style="margin-top:12px">Все цены за одну точку, с НДС. Оплата за год выгоднее помесячной примерно на 16-17%.</p>
+
+  <div class="sep"></div>
+  <div class="grid" style="align-items:start">
+    <div class="card quiz">
+      <h2>Какой тариф подойдёт</h2>
+      <p class="sub">Три вопроса. Ответ ориентировочный, итог согласуем на пилоте.</p>
+      <div class="f"><label for="qPts">Сколько у вас точек</label><input id="qPts" type="number" min="1" max="200" value="2"></div>
+      <fieldset><legend>Споров с площадкой в месяц на точку</legend>
+        <label><input type="radio" name="qDisp" value="few" checked> до 3</label>
+        <label><input type="radio" name="qDisp" value="mid"> от 4 до 10</label>
+        <label><input type="radio" name="qDisp" value="many"> больше 10</label></fieldset>
+      <fieldset><legend>Что ещё нужно</legend>
+        <label><input type="checkbox" id="qLegal"> вопросы юристу и финансисту без лимита</label>
+        <label><input type="checkbox" id="qCur"> личный куратор, помощь с налоговой</label></fieldset>
+      <button class="btn" id="quizGo" type="button">Подобрать</button>
+      <p id="quizOut" style="margin:14px 0 0;font-weight:600" role="status"></p>
+    </div>
+    <div class="card">
+      <h2>Спросите помощника</h2>
+      <p class="sub">Отвечает по базе частых вопросов. Если ответа нет, оставит вопрос команде.</p>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <div class="chips" id="chips"></div>
+      <form class="ask" id="askForm"><input id="askIn" placeholder="Например: что входит в Оптимальный" aria-label="Ваш вопрос"><button class="btn" type="submit">Спросить</button></form>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Частые вопросы</h2>
+  <div id="faq" style="max-width:760px;margin-top:8px"></div>
+</section>
+
+<!-- ЗАЯВКА -->
+<section class="view" id="v-buy" hidden>
+  <h1>Заявка на подключение</h1>
+  <p class="lead">Заполните данные, выберите тариф и проверьте стоимость.</p>
+  <div class="demo"><b>Демо-режим.</b> Заявка и оплата пока не отправляются команде. Данные сохраняются только в этом браузере и открывают демо личного кабинета.</div>
+  <form class="grid" id="buyForm" style="align-items:start">
+    <div class="card">
+      <h3>Контакты</h3>
+      <div class="f"><label for="bName">Имя</label><input id="bName" required autocomplete="name"></div>
+      <div class="f"><label for="bOrg">ИП или организация</label><input id="bOrg" required autocomplete="organization"></div>
+      <div class="r2">
+        <div class="f"><label for="bPhone">Телефон</label><input id="bPhone" type="tel" required autocomplete="tel"></div>
+        <div class="f"><label for="bMail">Почта</label><input id="bMail" type="email" required autocomplete="email"></div>
+      </div>
+      <div class="f"><label for="bMp">Площадки, с которыми работаете</label><input id="bMp" placeholder="Ozon, Яндекс Маркет, Wildberries"></div>
+    </div>
+    <div class="card">
+      <h3>Тариф и оплата</h3>
+      <div class="f"><label for="bPlan">Тариф</label><select id="bPlan"></select></div>
+      <div class="r2">
+        <div class="f"><label for="bPts">Точек</label><input id="bPts" type="number" min="1" max="200" value="1"></div>
+        <div class="f"><label for="bPay">Оплата</label><select id="bPay"><option value="y">За год</option><option value="m">Помесячно</option></select></div>
+      </div>
+      <div class="sep" style="margin:14px 0"></div>
+      <div class="note">К оплате</div>
+      <div class="big" id="bSum"></div>
+      <div class="per" id="bSumNote"></div>
+      <div class="f"><label style="display:flex;gap:8px;font-weight:500"><input type="checkbox" id="bOk" required> Согласен на обработку данных и условия сервиса</label></div>
+      <button class="btn" type="submit">Отправить заявку</button>
+    </div>
+  </form>
+  <div class="card" id="buyDone" hidden style="margin-top:16px">
+    <h2>Заявка сохранена</h2>
+    <p class="sub" style="margin-bottom:14px">В демо-режиме ничего не отправлено. Личный кабинет открыт, посмотрите, как выглядит сервис после покупки.</p>
+    <a class="btn" href="#account">Открыть личный кабинет</a>
+  </div>
+</section>
+
+<!-- КАБИНЕТ -->
+<section class="view" id="v-account" hidden>
+  <div id="accLocked">
+    <h1>Личный кабинет</h1>
+    <p class="lead">Кабинет открывается после подключения тарифа. Здесь юридические и финансовые вопросы, шаблоны, вызов замены и отчёты.</p>
+    <a class="btn" href="#buy">Оставить заявку</a>
+    <button class="btn sec" id="demoOn" type="button" style="margin-left:8px">Посмотреть демо-кабинет</button>
+  </div>
+  <div id="accMain" hidden>
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px">
+      <div><h1 style="margin:0 0 4px;font-size:clamp(26px,4vw,36px)">Личный кабинет</h1><div class="note" id="accWho"></div></div>
+      <button class="btn sec sm" id="reset" type="button">Выйти и очистить данные</button>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div id="tab"></div>
+  </div>
+</section>
+</main>
+
+<footer>Учебный проект команды №4 для Ингосстраха. Прототип работает в браузере: заявки, вопросы и напоминания хранятся только на вашем устройстве. Шаблоны и ответы помощника носят справочный характер и не заменяют консультацию юриста.</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+const pts=n=>{n=Math.round(n);const a=n%10,b=n%100;return n+' '+(a===1&&b!==11?'точку':(a>=2&&a<=4&&(b<10||b>=20)?'точки':'точек'))};
+/* ---------- данные ---------- */
+const PLANS=[
+ {id:'base',n:'Базовый',f:'Для владельцев 1-2 точек',y:12999,m:1299,disp:3,legal:2,swap:'990 ₽ плюс оплата смены',disc:10,l:['Разбор удержания и готовый ответ, до 3 случаев в месяц на точку','Подача претензии под ключ за 20% от возвращённых денег','Замена сотрудника по вызову: 990 ₽ плюс оплата смены','2 вопроса юристу или финансисту в месяц','Календарь сроков и разбор новых правил','Скидка 10% на полис Ингосстраха']},
+ {id:'opt',n:'Оптимальный',f:'Для сетей 2-9 точек',y:29999,m:2990,rec:1,disp:10,legal:Infinity,swap:'1 вызов в квартал на точку бесплатно',disc:20,l:['Споры с площадкой под ключ, до 10 случаев в месяц на точку','Срочный поиск замены, 1 вызов в квартал на точку бесплатно','Вопросы юристу и финансисту без лимита, ответ за 1 рабочий день','Отчёт по каждой точке раз в месяц','Шаблоны договоров с сотрудниками, контроль порога НДС','Скидка 20% на полис Ингосстраха']},
+ {id:'full',n:'Полная защита',f:'Для сетей от 5 точек и крупных сетей',y:57999,m:5790,disp:Infinity,legal:Infinity,swap:'без платы за вызов, в приоритете',disc:100,l:['Споры без лимита и досудебные претензии','Замены без платы за вызов, в приоритете','Личный куратор, ответ за 2 часа','Отчёт по точкам и разбор с аналитиком раз в месяц','Помощь с запросами налоговой, проверка точки раз в квартал','Полис Ингосстраха на точку уже включён']}];
+const P=id=>PLANS.find(p=>p.id===id);
+const FAQ=[
+ ['Что входит в тариф Базовый?','Разбор удержания и готовый ответ (до 3 случаев в месяц на точку), подача претензии под ключ за 20% от возвращённых денег, замена сотрудника по вызову за 990 ₽ плюс оплата смены, 2 вопроса юристу или финансисту в месяц, календарь сроков и скидка 10% на полис Ингосстраха.','тариф базовый входит что включает состав'],
+ ['Что входит в тариф Оптимальный?','Споры с площадкой под ключ (до 10 случаев в месяц на точку), срочный поиск замены (1 вызов в квартал на точку бесплатно), вопросы юристу и финансисту без лимита с ответом за 1 рабочий день, ежемесячный отчёт по каждой точке, шаблоны договоров, контроль порога НДС и скидка 20% на полис.','тариф оптимальный входит что включает состав рекомендуем'],
+ ['Что входит в Полную защиту?','Споры без лимита и досудебные претензии, замены без платы за вызов, личный куратор с ответом за 2 часа, отчёт и разбор с аналитиком раз в месяц, помощь с запросами налоговой, проверка точки раз в квартал. Полис Ингосстраха на точку уже включён.','тариф полная защита входит что включает состав куратор'],
+ ['Сколько это стоит?','За одну точку в год: Базовый 12 999 ₽, Оптимальный 29 999 ₽, Полная защита 57 999 ₽. Помесячно: 1 299, 2 990 и 5 790 ₽ в месяц. Все цены с НДС. Цена не зависит от числа посылок.','цена стоимость сколько стоит тариф оплата рублей'],
+ ['Выгоднее платить за год или помесячно?','Оплата за год выгоднее примерно на 16-17%, это почти 2 месяца в подарок.','год помесячно выгоднее скидка оплата'],
+ ['Если у меня несколько точек, цена растёт?','Да, цена считается за каждую точку. Например, владелец с 3 точками на Оптимальном платит 89 997 ₽ в год. От числа посылок цена не зависит.','несколько точек сеть цена точек'],
+ ['Как работает замена сотрудника?','Вы вызываете замену в личном кабинете. В Базовом это 990 ₽ плюс оплата смены. В Оптимальном один вызов в квартал на точку бесплатный. В Полной защите вызов бесплатный и в приоритете.','замена сотрудник смена не вышел подмена вызов'],
+ ['Что такое пилот?','В пилоте тариф Оптимальный стоит вполцены на 2 месяца. Так можно проверить сервис на своей точке до покупки на год.','пилот пробный тест скидка полцены'],
+ ['Что с полисом Ингосстраха?','Базовый даёт скидку 10% на полис, Оптимальный 20%, в Полную защиту полис на точку уже включён.','полис страховка ингосстрах скидка'],
+ ['Вы гарантируете возврат денег по спору?','Нет. Мы готовим документы и доводим спор до площадки, но решение принимает площадка. Исход зависит от доказательств, например видео с камер.','гарантия возврат результат спор деньги'],
+ ['Как оспорить удержание от площадки?','Соберите доказательства (видео с камер, фото посылки, скриншоты кабинета), подготовьте претензию и отправьте в поддержку площадки. В кабинете есть генератор претензии и чек-лист.','оспорить удержание штраф претензия площадка спор']];
+/* ---------- хранилище ---------- */
+let S={order:null,reqs:[],qs:[],rem:[],used:0,calc:null};
+try{const r=localStorage.getItem('pvz-s');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem('pvz-s',JSON.stringify(S))}catch(e){}};
+/* ---------- роутинг ---------- */
+function route(){
+  const h=(location.hash||'#home').slice(1);const v=['home','buy','account'].includes(h)?h:'home';
+  ['home','buy','account'].forEach(x=>{$('v-'+x).hidden=x!==v;const a=document.querySelector(`[data-nav=${x}]`);x===v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
+  if(v==='account')acc();
+  if(v==='buy')buyCalc();
+  window.scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+/* ---------- тарифы ---------- */
+function plansUI(){
+  $('plans').innerHTML=PLANS.map(p=>`<div class="card ${p.rec?'pick':''}">${p.rec?'<span class="badge">Рекомендуем</span>':''}<h3 style="color:var(--ac)">${p.n}</h3><p class="for">${p.f}</p><div class="price">${rub(p.y)}</div><div class="per">за точку в год · или ${rub(p.m)} в месяц</div><ul class="l">${p.l.map(x=>`<li>${x}</li>`).join('')}</ul><button class="btn ${p.rec?'':'sec'}" data-buy="${p.id}" type="button">Выбрать</button></div>`).join('');
+  document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{$('bPlan').value=b.dataset.buy;location.hash='#buy'});
+  $('bPlan').innerHTML=PLANS.map(p=>`<option value="${p.id}">${p.n}</option>`).join('');
+  $('bPlan').value='opt';
+}
+$('quizGo').onclick=()=>{
+  const n=Math.max(1,parseInt($('qPts').value)||1),d=document.querySelector('[name=qDisp]:checked').value,legal=$('qLegal').checked,cur=$('qCur').checked;
+  let id='opt',why='Подходит для сетей и до 10 споров в месяц на точку.';
+  if(cur||d==='many'||n>=10){id='full';why=cur?'Нужен личный куратор и помощь с налоговой.':d==='many'?'Больше 10 споров в месяц на точку, нужен тариф без лимита.':'Крупная сеть, нужен приоритет и куратор.'}
+  else if(n<=2&&d==='few'&&!legal){id='base';why='1-2 точки, до 3 споров в месяц, хватит 2 вопросов юристу.'}
+  $('quizOut').innerHTML=`Вам подойдёт: <span style="color:var(--ac)">${P(id).n}</span>. ${why} Для ${pts(n)} это ${rub(P(id).y*n)} в год. <a href="#buy" id="goBuy">Оставить заявку</a>`;
+  $('goBuy').onclick=()=>{$('bPlan').value=id;$('bPts').value=n};
+};
+/* ---------- помощник и FAQ ---------- */
+const tok=s=>s.toLowerCase().replace(/[^a-zа-яё0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2).map(w=>w.slice(0,5));
+function answer(q){
+  const t=new Set(tok(q));let best=null,sc=0;
+  FAQ.forEach(([a,b,k])=>{const kw=new Set(tok(a+' '+k));let s=0;t.forEach(w=>{if(kw.has(w))s++});if(s>sc){sc=s;best=b}});
+  return sc>=1?best:null;
+}
+function say(t,w){const d=document.createElement('div');d.className='msg '+w;d.textContent=t;$('chat').appendChild(d);$('chat').scrollTop=1e5}
+function ask(q){
+  q=q.trim();if(!q)return;say(q,'u');const a=answer(q);
+  if(a)say(a,'b');else{say('Точного ответа в базе нет. Я сохранил ваш вопрос, команда ответит на него отдельно. В демо-режиме он остаётся только в этом браузере.','b');S.qs.push({t:q,d:new Date().toISOString(),from:'chat'});save()}
+}
+$('askForm').onsubmit=e=>{e.preventDefault();ask($('askIn').value);$('askIn').value=''};
+function chatInit(){
+  say('Здравствуйте. Спросите про тарифы, цены, замену сотрудника или споры с площадкой.','b');
+  $('chips').innerHTML=['Сколько стоит?','Как работает замена сотрудника?','Что входит в Оптимальный?','Вы гарантируете возврат?'].map(c=>`<button type="button" class="chip">${c}</button>`).join('');
+  document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>ask(c.textContent));
+  $('faq').innerHTML=FAQ.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join('');
+}
+/* ---------- заявка ---------- */
+function buyCalc(){
+  const p=P($('bPlan').value),n=Math.max(1,Math.min(200,parseInt($('bPts').value)||1)),y=$('bPay').value==='y';
+  $('bSum').textContent=rub((y?p.y:p.m*12)*n);
+  $('bSumNote').textContent=y?`в год за ${pts(n)} · ≈${rub(p.y/12*n)} в месяц`:`в год за ${pts(n)} при оплате по месяцам · ${rub(p.m*n)} в месяц`;
+}
+['bPlan','bPts','bPay'].forEach(i=>$(i).addEventListener('input',buyCalc));
+$('buyForm').onsubmit=e=>{
+  e.preventDefault();
+  S.order={name:$('bName').value,org:$('bOrg').value,phone:$('bPhone').value,mail:$('bMail').value,mp:$('bMp').value,plan:$('bPlan').value,pts:Math.max(1,parseInt($('bPts').value)||1),pay:$('bPay').value,d:new Date().toISOString(),demo:false};
+  S.used=0;save();$('buyForm').hidden=true;$('buyDone').hidden=false;
+};
+/* ---------- кабинет ---------- */
+const TABS=[['home','Обзор'],['dispute','Спор с площадкой'],['swap','Вызвать замену'],['expert','Юрист и финансист'],['tpl','Шаблоны'],['profit','Прибыль точки'],['rem','Напоминания'],['faq','FAQ']];
+let cur='home';
+function acc(){
+  const o=S.order;$('accLocked').hidden=!!o;$('accMain').hidden=!o;
+  if(!o)return;
+  $('accWho').textContent=`${o.org}, тариф «${P(o.plan).n}», ${pts(o.pts)}${o.demo?' · демо-данные':''}`;
+  $('tabs').innerHTML=TABS.map(([k,n])=>`<button role="tab" aria-selected="${k===cur}" data-t="${k}">${n}</button>`).join('');
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{cur=b.dataset.t;acc()});
+  $('tab').innerHTML='';TAB[cur]($('tab'),o,P(o.plan));
+}
+$('demoOn').onclick=()=>{S.order={name:'Мария',org:'ИП Пример',phone:'',mail:'',mp:'Ozon, Яндекс Маркет',plan:'opt',pts:3,pay:'y',d:new Date().toISOString(),demo:true};S.used=0;save();acc()};
+$('reset').onclick=()=>{S={order:null,reqs:[],qs:[],rem:[],used:0,calc:null};save();$('buyForm').reset();$('buyForm').hidden=false;$('buyDone').hidden=true;acc();location.hash='#home'};
+const dt=s=>new Date(s).toLocaleDateString('ru-RU');
+const lim=v=>v===Infinity?'без лимита':v;
+const TAB={
+home(el,o,p){
+  const dq=p.disp===Infinity?null:p.disp*o.pts,left=dq===null?null:Math.max(0,dq-S.used);
+  el.innerHTML=`<div class="grid"><div class="card"><h3>Ваш тариф</h3><dl class="kv"><dt>Тариф</dt><dd>${p.n}</dd><dt>Точек</dt><dd>${o.pts}</dd><dt>Оплата</dt><dd>${o.pay==='y'?'за год':'помесячно'}</dd><dt>Стоимость</dt><dd>${rub((o.pay==='y'?p.y:p.m*12)*o.pts)} в год</dd><dt>Подключён</dt><dd>${dt(o.d)}</dd></dl></div>
+  <div class="card"><h3>Споры в этом месяце</h3><div class="big">${S.used}<span style="font-size:16px;color:var(--mut);font-weight:600"> из ${dq===null?'∞':dq}</span></div>${dq===null?'':`<div class="q"><i style="width:${Math.min(100,S.used/dq*100)}%"></i></div>`}<p class="note" style="margin-top:8px">${dq===null?'Лимита нет.':`Осталось ${left}.`}</p></div>
+  <div class="card"><h3>Что открыто</h3><ul class="l" style="margin:0"><li>Вопросы юристу и финансисту: ${lim(p.legal)}${p.legal===Infinity?'':' в месяц'}</li><li>Замена: ${p.swap}</li><li>Скидка на полис Ингосстраха: ${p.disc===100?'полис включён':p.disc+'%'}</li></ul></div></div>
+  <div class="card" style="margin-top:16px"><h3>Заявки и вопросы</h3>${S.reqs.length+S.qs.length===0?'<p class="note" style="margin:0">Пока ничего нет. Вызовите замену или задайте вопрос эксперту, и запись появится здесь.</p>':`<div class="list">${[...S.reqs.map(r=>({d:r.d,t:r.t,s:r.s,x:r.x})),...S.qs.map(q=>({d:q.d,t:q.t,s:'Принят',x:q.from==='chat'?'из чата':'эксперту'}))].sort((a,b)=>b.d.localeCompare(a.d)).map(i=>`<div class="item"><div>${esc(i.t)}<small>${dt(i.d)} · ${esc(i.x||'')}</small></div><span class="st">${esc(i.s)}</span></div>`).join('')}</div>`}</div>`;
+},
+dispute(el,o,p){
+  const dq=p.disp===Infinity?Infinity:p.disp*o.pts;
+  el.innerHTML=`<div class="grid" style="align-items:start"><div class="card"><h3>Что произошло</h3>
+  <div class="f"><label for="dPl">Площадка</label><select id="dPl"><option>Ozon</option><option>Яндекс Маркет</option><option>Wildberries</option><option>Другая</option></select></div>
+  <div class="f"><label for="dRe">За что удержали</label><select id="dRe"><option value="idle">Простой или срыв графика</option><option value="loss">Недостача или повреждение посылок</option><option value="claim">Претензии клиентов</option><option value="other">Другое</option></select></div>
+  <div class="r2"><div class="f"><label for="dSum">Сумма, ₽</label><input id="dSum" type="number" min="0" value="4500"></div><div class="f"><label for="dDt">Дата</label><input id="dDt" type="date"></div></div>
+  <div class="f"><label for="dWh">Что произошло</label><textarea id="dWh" rows="3"></textarea></div>
+  <p class="note">Использовано ${S.used} из ${dq===Infinity?'∞':dq} в этом месяце.</p></div>
+  <div class="card"><h3>Черновик претензии</h3><pre id="dTx"></pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="dCp" type="button">Скопировать</button><button class="btn sm sec" id="dSv" type="button" ${S.used>=dq?'disabled':''}>Записать как поданный спор</button></div><p class="note" id="dMs" role="status" style="margin-top:8px"></p>
+  <h3 style="margin-top:16px">Что приложить</h3><ul class="l" id="dEv"></ul></div></div>`;
+  $('dDt').valueAsDate=new Date();
+  const RE={idle:'простой или срыв графика работы',loss:'недостача или повреждение посылок',claim:'претензии клиентов',other:'основание, которое площадка не пояснила'};
+  const EV={idle:['Видео с камер за день удержания','График работы и фото вывески с режимом','Скриншоты кабинета с удержанием','Переписка с поддержкой'],loss:['Видео приёмки и выдачи посылки','Фото посылки при приёмке, акт приёмки','Скриншоты кабинета с удержанием','Пункт оферты, на который ссылается площадка'],claim:['Видео выдачи заказа','Данные системы о выдаче (время, сотрудник)','Скриншоты претензии клиента и удержания','Переписка с поддержкой'],other:['Скриншоты кабинета с удержанием','Пункт оферты площадки','Всё, что подтверждает вашу позицию']};
+  const up=()=>{const r=$('dRe').value,s=Math.round(+$('dSum').value||0).toLocaleString('ru-RU'),w=$('dWh').value.trim()||'[опишите, что произошло]';
+   $('dTx').textContent=`Кому: ${$('dPl').value}, служба поддержки партнёров\nОт кого: ${o.org}, [ИНН, адрес пункта]\nТема: претензия по удержанию от ${dt($('dDt').value||new Date())}\n\nЯ, владелец пункта выдачи, получил удержание на сумму ${s} ₽ (${RE[r]}). С удержанием не согласен.\n\nОбстоятельства: ${w}\n\nПрошу:\n1. Сообщить основание и расчёт удержания.\n2. Пересмотреть решение и вернуть ${s} ₽.\n\nК претензии приложены:\n${EV[r].map((e,i)=>(i+1)+') '+e).join('\n')}\n\nЖду ответа в срок, указанный в оферте площадки.\n[Дата, подпись]`;
+   $('dEv').innerHTML=EV[r].map(e=>`<li>${e}</li>`).join('')};
+  ['dPl','dRe','dSum','dDt','dWh'].forEach(i=>$(i).addEventListener('input',up));up();
+  $('dCp').onclick=async()=>{try{await navigator.clipboard.writeText($('dTx').textContent);$('dMs').textContent='Скопировано.'}catch(e){$('dMs').textContent='Выделите текст и нажмите Ctrl+C.'}};
+  $('dSv').onclick=()=>{S.used++;S.reqs.push({d:new Date().toISOString(),t:`Спор: ${$('dPl').value}, ${rub(+$('dSum').value||0)}`,s:'Записан',x:'спор'});save();acc()};
+},
+swap(el,o,p){
+  el.innerHTML=`<div class="grid" style="align-items:start"><div class="card"><h3>Срочная замена сотрудника</h3><p class="sub" style="margin-bottom:14px">Условия вашего тарифа: ${p.swap}.</p>
+  <div class="f"><label for="sAd">Какая точка</label><input id="sAd" placeholder="Адрес или номер точки"></div>
+  <div class="r2"><div class="f"><label for="sDt">Дата</label><input id="sDt" type="date"></div><div class="f"><label for="sTm">Смена</label><select id="sTm"><option>Утро</option><option>День</option><option>Вечер</option><option>Весь день</option></select></div></div>
+  <div class="f"><label for="sNt">Комментарий</label><textarea id="sNt" rows="2" placeholder="Например: нужен человек с опытом работы на Ozon"></textarea></div>
+  <button class="btn" id="sGo" type="button">Вызвать замену</button><p class="note" id="sMs" role="status" style="margin-top:8px"></p></div>
+  <div class="card"><h3>Как это работает</h3><ul class="l" style="margin:0"><li>Вы оставляете заявку на смену.</li><li>Координатор подбирает проверенного сотрудника.</li><li>Вы получаете подтверждение и контакт сотрудника.</li><li>После смены можно оценить результат.</li></ul><p class="note" style="margin-top:12px">В демо-режиме заявка сохраняется только в этом браузере, замена не подбирается.</p></div></div>`;
+  $('sDt').valueAsDate=new Date();
+  $('sGo').onclick=()=>{const a=$('sAd').value.trim();if(!a){$('sMs').textContent='Укажите точку.';return}
+   S.reqs.push({d:new Date().toISOString(),t:`Замена: ${a}, ${dt($('sDt').value)}, ${$('sTm').value.toLowerCase()}`,s:'Ищем',x:'замена'});save();cur='home';acc()};
+},
+expert(el,o,p){
+  el.innerHTML=`<div class="grid" style="align-items:start"><div class="card"><h3>Вопрос юристу или финансисту</h3><p class="sub" style="margin-bottom:14px">${p.legal===Infinity?'Без лимита':`${p.legal} вопроса в месяц`}. Ответ за ${p.id==='full'?'2 часа':p.id==='opt'?'1 рабочий день':'срок по тарифу'}.</p>
+  <div class="f"><label for="xTo">Кому</label><select id="xTo"><option>Юристу</option><option>Финансисту</option></select></div>
+  <div class="f"><label for="xTx">Вопрос</label><textarea id="xTx" rows="5" placeholder="Опишите ситуацию и что хотите узнать"></textarea></div>
+  <button class="btn" id="xGo" type="button">Отправить</button><p class="note" id="xMs" role="status" style="margin-top:8px"></p></div>
+  <div class="card"><h3>С чем обычно обращаются</h3><ul class="l" style="margin:0"><li>Как оформить сотрудника на точке</li><li>Когда превышается порог НДС</li><li>Как ответить на удержание площадки</li><li>Какие расходы можно учесть</li></ul><p class="note" style="margin-top:12px">Вопросов отправлено: ${S.qs.filter(q=>q.from!=='chat').length}.</p></div></div>`;
+  $('xGo').onclick=()=>{const t=$('xTx').value.trim();if(!t){$('xMs').textContent='Напишите вопрос.';return}
+   const used=S.qs.filter(q=>q.from!=='chat').length;if(used>=p.legal){$('xMs').textContent='Лимит вопросов на месяц исчерпан.';return}
+   S.qs.push({t:`${$('xTo').value}: ${t.slice(0,80)}`,d:new Date().toISOString(),from:'expert'});save();cur='home';acc()};
+},
+tpl(el){
+  const T=[['Акт о повреждении посылки при приёмке',`АКТ № ___ от [дата]\nПункт выдачи: [адрес]\nПосылка: [номер отправления]\n\nПри приёмке выявлено: [описание повреждения].\nФото повреждения приложены: [количество].\n\nПринял: [ФИО, подпись]\nПередал (курьер): [ФИО, подпись]`],
+  ['Запрос в поддержку площадки',`Здравствуйте.\nПункт выдачи [адрес/номер], удержание от [дата] на сумму [сумма] ₽.\nПрошу сообщить основание удержания и расчёт суммы.\nДоказательства приложены: [перечень].\nЖду ответа.\n[Название, контакты]`],
+  ['Чек-лист открытия и закрытия смены',`Открытие:\n[ ] проверить камеры и запись\n[ ] сверить посылки на выдачу\n[ ] проверить режим работы на вывеске\n\nЗакрытие:\n[ ] сверить выданные и оставшиеся посылки\n[ ] сохранить запись за смену\n[ ] отметить проблемные случаи с фото`],
+  ['График смен на неделю',`Неделя: [даты]\nПн: [ФИО, время]\nВт: [ФИО, время]\nСр: [ФИО, время]\nЧт: [ФИО, время]\nПт: [ФИО, время]\nСб: [ФИО, время]\nВс: [ФИО, время]\nЗамена на случай невыхода: [ФИО, телефон]`]];
+  el.innerHTML=`<p class="sub">Шаблоны с пустыми полями в квадратных скобках. Для договоров с сотрудниками обратитесь к юристу в разделе «Юрист и финансист».</p><div class="grid">${T.map((t,i)=>`<div class="card"><h3>${t[0]}</h3><pre>${esc(t[1])}</pre><button class="btn sm sec" data-c="${i}" type="button">Скопировать</button> <span class="note" id="cm${i}" role="status"></span></div>`).join('')}</div>`;
+  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=async()=>{const i=b.dataset.c;try{await navigator.clipboard.writeText(T[i][1]);$('cm'+i).textContent='Скопировано'}catch(e){$('cm'+i).textContent='Выделите текст вручную'}});
+},
+profit(el){
+  const C=S.calc||{income:180000,rent:45000,pay:70000,util:8000,fines:9000,other:12000,fee:0};
+  const F=[['income','Вознаграждение площадки за месяц, ₽'],['rent','Аренда, ₽'],['pay','Зарплаты, ₽'],['util','Свет, связь, ₽'],['fines','Штрафы и удержания, ₽'],['other','Прочее, ₽'],['fee','Плата площадки с вознаграждения, %']];
+  el.innerHTML=`<div class="grid" style="align-items:start"><div class="card"><h3>Расходы за месяц</h3><p class="note" style="margin:0 0 12px">Стоят примерные числа, замените своими.</p>${F.map(([k,n])=>`<div class="f"><label for="c_${k}">${n}</label><input id="c_${k}" type="number" min="0" step="any" value="${C[k]}"></div>`).join('')}</div>
+  <div class="card"><h3>Прибыль</h3><div class="big" id="cP"></div><div id="cM" class="note" style="margin:6px 0 14px"></div><div id="cB" class="list" style="margin:0"></div></div></div>`;
+  const run=()=>{const v={};F.forEach(([k])=>v[k]=Math.max(0,+$('c_'+k).value||0));S.calc=v;save();
+   const fee=Math.min(100,v.fee)/100*v.income,it=[['Аренда',v.rent],['Зарплаты',v.pay],['Свет, связь',v.util],['Штрафы',v.fines],['Прочее',v.other],['Плата площадки',fee]],p=v.income-it.reduce((a,b)=>a+b[1],0);
+   $('cP').textContent=rub(p);$('cP').className='big '+(p>=0?'pos':'neg');$('cM').textContent=v.income>0?`Рентабельность ${(p/v.income*100).toFixed(1).replace('.',',')}%. За год: ${rub(p*12)}`:'';
+   const mx=Math.max(1,...it.map(i=>i[1]));$('cB').innerHTML=it.map(([n,x])=>`<div style="display:grid;grid-template-columns:120px 1fr 92px;gap:10px;align-items:center;font-size:14px"><span>${n}</span><span class="q" style="margin:0"><i style="width:${x/mx*100}%"></i></span><span style="text-align:right">${rub(x)}</span></div>`).join('')};
+  F.forEach(([k])=>$('c_'+k).addEventListener('input',run));run();
+},
+rem(el){
+  el.innerHTML=`<div class="grid" style="align-items:start"><div class="card"><h3>Календарь сроков</h3><p class="sub" style="margin-bottom:14px">Добавьте свои сроки: оплата аренды, отчётность, окончание договора. Даты сроков вы вносите сами, сервис их не подставляет.</p>
+  <div class="f"><label for="rT">Что напомнить</label><input id="rT"></div><div class="f"><label for="rD">Дата</label><input id="rD" type="date"></div><button class="btn" id="rA" type="button">Добавить</button></div>
+  <div class="card"><h3>Список</h3><div class="list" id="rL" style="margin:0"></div></div></div>`;
+  const draw=()=>{const L=[...S.rem].sort((a,b)=>a.d.localeCompare(b.d));$('rL').innerHTML=L.length?L.map(r=>{const days=Math.round((new Date(r.d)-new Date(new Date().toDateString()))/864e5);return `<div class="item"><div>${esc(r.t)}<small>${dt(r.d)} · ${days<0?'просрочено':days===0?'сегодня':'через '+days+' дн.'}</small></div><button class="btn sec sm" data-x="${r.id}" type="button">Удалить</button></div>`}).join(''):'<p class="note" style="margin:0">Пока пусто.</p>';
+   document.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{S.rem=S.rem.filter(r=>r.id!=b.dataset.x);save();draw()})};
+  $('rA').onclick=()=>{const t=$('rT').value.trim(),d=$('rD').value;if(!t||!d)return;S.rem.push({id:Date.now(),t,d});save();$('rT').value='';draw()};draw();
+},
+faq(el){el.innerHTML=`<div style="max-width:760px">${FAQ.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`}
+};
+/* ---------- старт ---------- */
+plansUI();chatInit();buyCalc();route();
+</script>
